@@ -1,3 +1,6 @@
+## Logical test
+located in `cmd/logical_test`
+
 ## Post Service
 
 ### Prerequisites
