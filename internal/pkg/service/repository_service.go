@@ -1,17 +1,54 @@
 package service
 
 import (
+	"encoding/json"
 	. "github.com/dinowar/rakia-home-task/internal/pkg/domain/model"
+	"go.uber.org/zap"
+	"io/ioutil"
+	"os"
 	"sync"
 )
 
 type RepositoryService struct {
-	db   map[string]*Post
-	lock sync.RWMutex
+	db     map[string]*Post
+	logger *LogService
+	lock   sync.RWMutex
 }
 
-func NewRepositoryService() *RepositoryService {
-	return &RepositoryService{db: make(map[string]*Post)}
+func NewRepositoryService(logger *LogService) *RepositoryService {
+	db := make(map[string]*Post)
+	initErr := initDB(db, logger.logger)
+	if initErr != nil {
+		logger.logger.Fatal(initErr.Error())
+	}
+	return &RepositoryService{db: db, logger: logger}
+}
+
+func initDB(db map[string]*Post, logger *zap.Logger) error {
+	file, openErr := os.Open("blog_data.json")
+	if os.IsNotExist(openErr) {
+		logger.Error(openErr.Error())
+		return nil
+	}
+
+	defer file.Close()
+
+	bytes, readErr := ioutil.ReadAll(file)
+	if readErr != nil {
+		return readErr
+	}
+
+	var posts []Post
+	unmarshalErr := json.Unmarshal(bytes, &posts)
+	if unmarshalErr != nil {
+		return unmarshalErr
+	}
+
+	for _, post := range posts {
+		db[post.Id] = &post
+	}
+
+	return nil
 }
 
 func (rep *RepositoryService) CreatePost(post *Post) *Post {

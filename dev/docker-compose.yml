@@ -1,0 +1,16 @@
+services:
+  service:
+    container_name: service
+    build:
+      context: ../
+    ports:
+      - "9090:9090"
+    env_file:
+      - env.txt
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
