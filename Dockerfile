@@ -14,6 +14,7 @@ RUN apk add --update --no-cache musl-dev vips curl openssl
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY --from=builder /app/service /service
+COPY --from=builder /app/data /data
 
 USER appuser
 CMD ["/service"]
