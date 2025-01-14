@@ -59,8 +59,7 @@ func (server *Server) CreatePost(context *gin.Context) {
 }
 
 func (server *Server) GetPosts(context *gin.Context) {
-	author := context.DefaultQuery("author", "")
-	posts := server.rep.GetPosts(author)
+	posts := server.rep.GetPosts()
 	context.JSON(http.StatusOK, gin.H{
 		"posts": posts,
 	})

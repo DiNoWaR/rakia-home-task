@@ -84,16 +84,13 @@ func (rep *RepositoryService) GetPost(id string) *Post {
 	return rep.db[id]
 }
 
-func (rep *RepositoryService) GetPosts(author string) []*Post {
+func (rep *RepositoryService) GetPosts() []*Post {
 	rep.lock.Lock()
 	defer rep.lock.Unlock()
 	var posts []*Post
 	for _, post := range rep.db {
-		if author != "" && post.Author == author {
-			posts = append(posts, post)
-		} else {
-			posts = append(posts, post)
-		}
+		posts = append(posts, post)
+
 	}
 	return posts
 }
